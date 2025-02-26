@@ -47,6 +47,30 @@ app.get('/menu', async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+app.put('/menu/:id', async (req, res) => {
+  try {
+    const { name, description, price } = req.body;
+    const { id } = req.params;
+
+    if (!name || !price) {
+      return res.status(400).json({ message: 'Validation error: Name and price are required' });
+    }
+
+    const menuItem = await MenuItem.findByIdAndUpdate(id, { name, description, price }, { new: true });
+  } catch (error) { 
+    console.error('Error updating menu item:', error);
+    res.status(500).json({ message: 'Server error' });
+  } });
+app.delete('/menu/:id', async (req, res) => { 
+  try { 
+    const { id } = req.params;
+    await MenuItem.findByIdAndDelete(id);
+    res.status(200).json({ message: 'Menu item deleted successfully' });
+  } catch (error) { 
+    console.error('Error deleting menu item:', error);
+    res.status(500).json({ message: 'Server error' });
+  } });
+  
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
